@@ -2,6 +2,9 @@
 using Raven.Client;
 using Raven.Client.Embedded;
 using ServiceStack;
+using ServiceStack.Auth;
+using ServiceStack.Authentication.RavenDb;
+using ServiceStack.Caching;
 using ServiceStack.Validation;
 using _2_Consuming_Server.Services;
 
@@ -17,11 +20,22 @@ namespace _2_Consuming_Server {
             documentStore.Initialize();
             container.Register<IDocumentStore>(documentStore);
 
+            container.Register<ICacheClient>(new MemoryCacheClient());
+
+            Plugins.Add(new AuthFeature(() => new AuthUserSession(), new IAuthProvider[] {
+                new BasicAuthProvider(), 
+            }));
+            container.Register<IUserAuthRepository>(new RavenDbUserAuthRepository(Container.Resolve<IDocumentStore>()));
+
             Plugins.Add(new ValidationFeature());
-            Container.RegisterValidators(typeof(AppHost).Assembly);
+            container.RegisterValidators(typeof(AppHost).Assembly);
 
             Plugins.Add(new CorsFeature());
             Plugins.Add(new PostmanFeature());
+
+
+            var userAuthRepo = container.Resolve<IUserAuthRepository>();
+            userAuthRepo.CreateUserAuth(new UserAuth {UserName = "test"}, "test123");
         }
     }
 }

@@ -6,6 +6,8 @@ using ServiceStack;
 using _2_Consuming_Shared;
 
 namespace _2_Consuming_Server.Services {
+
+    [Authenticate]
     internal class AnimalService : Service {
         private readonly IDocumentStore documentStore;
         public AnimalService(IDocumentStore documentStore) {

@@ -72,6 +72,9 @@
     <Reference Include="ServiceStack">
       <HintPath>..\packages\ServiceStack.4.0.31\lib\net40\ServiceStack.dll</HintPath>
     </Reference>
+    <Reference Include="ServiceStack.Authentication.RavenDb">
+      <HintPath>..\packages\ServiceStack.Authentication.RavenDB.4.0.31\lib\net40\ServiceStack.Authentication.RavenDb.dll</HintPath>
+    </Reference>
     <Reference Include="ServiceStack.Client">
       <HintPath>..\packages\ServiceStack.Client.4.0.31\lib\net40\ServiceStack.Client.dll</HintPath>
     </Reference>

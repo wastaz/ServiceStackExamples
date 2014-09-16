@@ -12,11 +12,17 @@ namespace _2_Consuming_Server.Services {
             this.documentStore = documentStore;
         }
 
-        public IList<AnimalResponse> Get(FindAnimals request) {
+        public List<AnimalResponse> Get(FindAnimals request) {
             var results = new List<AnimalResponse>();
             using(var session = documentStore.OpenSession()) {
                 var animals = session.Query<Animal>().Where(a => a.Name.StartsWith(request.Name)).ToList();
-                results.AddRange(animals.Select(a => new AnimalResponse { Name = a.Name, Race = a.Race, Noise = GetNoise(a.Race) }));
+                results.AddRange(
+                    animals.Select(
+                        a => new AnimalResponse {
+                            Name = a.Name,
+                            Race = a.Race,
+                            Noise = GetNoise(a.Race)
+                        }));
             }
             return results;
         }
@@ -34,13 +40,13 @@ namespace _2_Consuming_Server.Services {
                 session.SaveChanges();
             }
             return new AnimalResponse {
-                                          Name = request.Name, 
-                                          Race = request.Race, 
-                                          Noise = GetNoise(request.Race)
-                                      };
+                Name = request.Name,
+                Race = request.Race,
+                Noise = GetNoise(request.Race)
+            };
         }
 
-        public IList<AnimalResponse> Post(AnimalCollection request) {
+        public List<AnimalResponse> Post(AnimalCollection request) {
             return request.Animals.Select(Post).ToList();
         }
 

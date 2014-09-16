@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using ServiceStack;
 using ServiceStack.Text;
@@ -15,7 +16,7 @@ namespace _2_Consuming_Client {
         static async Task DoStuff(IServiceClient client) {
             var response = await client.PostAsync(
                 new AnimalCollection {
-                    Animals = new[] {
+                    Animals = new List<Animal> {
                         new Animal {Name = "Pipen", Race = Race.Cat},
                         new Animal {Name = "Morris", Race = Race.Dog},
                         new Animal {Name = "Grävling", Race = Race.Cat},

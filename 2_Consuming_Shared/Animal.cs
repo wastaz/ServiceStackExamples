@@ -11,7 +11,7 @@ namespace _2_Consuming_Shared {
     }
 
     [Route("/animals/", "GET")]
-    public class FindAnimals : IReturn<IList<AnimalResponse>> {
+    public class FindAnimals : IReturn<List<AnimalResponse>> {
         public string Name { get; set; }
     }
 
@@ -27,16 +27,18 @@ namespace _2_Consuming_Shared {
     }
 
     [Route("/animals", "POST")]
-    public class AnimalCollection : IReturn<IList<AnimalResponse>> {
+    public class AnimalCollection : IReturn<List<AnimalResponse>> {
         public AnimalCollection() {
-            Animals = new Animal[0];
+            Animals = new List<Animal>();
         }
-        public Animal[] Animals { get; set; }
+        public List<Animal> Animals { get; set; }
     }
 
     public class AnimalResponse {
         public string Name { get; set; }
         public Race Race { get; set; }
         public string Noise { get; set; }
+
+        public ResponseStatus ResponseStatus { get; set; }
     }
 }

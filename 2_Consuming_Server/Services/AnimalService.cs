@@ -29,7 +29,10 @@ namespace _2_Consuming_Server.Services {
 
         public AnimalResponse Get(GetAnimal request) {
             using(var session = documentStore.OpenSession()) {
-                var result = session.Query<Animal>().First(a => a.Name.Equals(request.Name));
+                var result = session.Query<Animal>().FirstOrDefault(a => a.Name.Equals(request.Name));
+                if (result == null) {
+                    throw HttpError.NotFound("Animal with name {0} not found".Fmt(request.Name));
+                }
                 return new AnimalResponse {Name = result.Name, Race = result.Race, Noise = GetNoise(result.Race)};
             }
         }
@@ -39,11 +42,9 @@ namespace _2_Consuming_Server.Services {
                 session.Store(request);
                 session.SaveChanges();
             }
-            return new AnimalResponse {
-                Name = request.Name,
-                Race = request.Race,
-                Noise = GetNoise(request.Race)
-            };
+            var result = request.ConvertTo<AnimalResponse>();
+            result.Noise = GetNoise(request.Race);
+            return result;
         }
 
         public List<AnimalResponse> Post(AnimalCollection request) {

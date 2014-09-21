@@ -25,14 +25,20 @@ namespace _4_AutoQuery_Server.Services {
             return DoQuery(request);
         }
 
-        public QueryResponse<TBaseType> DoQuery<TBaseType>(IQuery<TBaseType> query) {
+        public QueryResponse<TBaseType> DoQuery<TBaseType>(
+            IQuery<TBaseType> query) {
+
             var q = autoQuery.CreateQuery(query, Request.GetRequestParams());
             return autoQuery.Execute(query, q);
+
         }
 
-        public QueryResponse<TResultType> DoQuery<TBaseType, TResultType>(IQuery<TBaseType, TResultType> query) {
+        public QueryResponse<TResultType> DoQuery<TBaseType, TResultType>(
+            IQuery<TBaseType, TResultType> query) {
+
             var q = autoQuery.CreateQuery(query, Request.GetRequestParams());
             return autoQuery.Execute(query, q);
+
         }
     }
 }

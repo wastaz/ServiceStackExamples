@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Topshelf;
+﻿using Topshelf;
 
 namespace _3_SSE_Server {
     internal class Program {
@@ -18,8 +13,8 @@ namespace _3_SSE_Server {
                     s.WhenStopped(ah => ah.Stop());
                 });
                 x.RunAsLocalSystem();
-                x.SetDescription("Basic REST Service example");
-                x.SetDisplayName("Basic REST Service");
+                x.SetDescription("Basic SSE Service example");
+                x.SetDisplayName("Basic SSE Service");
                 x.SetServiceName("BasicRestService");
                 x.StartAutomatically();
             });

@@ -23,7 +23,10 @@ namespace _2_Consuming_Server.Services {
                 () => {
                     var results = new List<AnimalResponse>();
                     using(var session = documentStore.OpenSession()) {
-                        var animals = session.Query<Animal>().Where(a => a.Name.StartsWith(request.Name)).ToList();
+                        var animals = 
+                            session.Query<Animal>()
+                                   .Where(a => a.Name.StartsWith(request.Name))
+                                   .ToList();
                         results.AddRange(
                             animals.Select(
                                 a => new AnimalResponse {
@@ -37,14 +40,26 @@ namespace _2_Consuming_Server.Services {
         }
 
         public object Get(GetAnimal request) {
-            return Request.ToOptimizedResultUsingCache(base.Cache, UrnId.Create(typeof(GetAnimal), request.Name),
+            return Request.ToOptimizedResultUsingCache(
+                base.Cache, 
+                UrnId.Create(typeof(GetAnimal), request.Name),
                 () => {
                     using (var session = documentStore.OpenSession()) {
-                        var result = session.Query<Animal>().FirstOrDefault(a => a.Name.Equals(request.Name));
+                        var result =
+                            session
+                                .Query<Animal>()
+                                .FirstOrDefault(
+                                    a => a.Name.Equals(request.Name)
+                                );
                         if (result == null) {
-                            throw HttpError.NotFound("Animal with name {0} not found".Fmt(request.Name));
+                            throw HttpError.NotFound(
+                                "Animal with name {0} not found".Fmt(request.Name));
                         }
-                        return new AnimalResponse { Name = result.Name, Race = result.Race, Noise = GetNoise(result.Race) };
+                        return new AnimalResponse {
+                            Name = result.Name, 
+                            Race = result.Race, 
+                            Noise = GetNoise(result.Race)
+                        };
                     }
                 });
         }

@@ -30,7 +30,9 @@ namespace _2_Consuming_Client {
                 });
             response.PrintDump();
 
-            var queryResponse = await client.GetAsync(new FindAnimals {Name = "Pi"});
+            var queryResponse = await client.GetAsync(
+                new FindAnimals {Name = "Pi"}
+                );
             queryResponse.PrintDump();
         }
     }

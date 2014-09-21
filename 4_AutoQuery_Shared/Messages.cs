@@ -21,7 +21,8 @@ namespace _4_AutoQuery_Shared {
     }
 
     [Route("/fullanimalinfo", "GET")]
-    public class FindFullAnimalInfo :QueryBase<Animal, FullAnimalInfo>, IJoin<Animal, Owner, House> { }
+    public class FindFullAnimalInfo : QueryBase<Animal, FullAnimalInfo>, 
+                                      IJoin<Animal, Owner, House> { }
 
     public class FullAnimalInfo {
         public string AnimalName { get; set; }

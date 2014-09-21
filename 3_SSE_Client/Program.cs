@@ -23,18 +23,21 @@ namespace _3_SSE_Client {
 
             var sseClient = new ServerEventsClient("http://localhost:1337/");
             sseClient.RegisterReceiver<GlobalReciever>();
-            sseClient.OnCommand = sem => {
-                                      var joinEvent = sem as ServerEventJoin;
-                                      if(joinEvent != null) {
-                                          Console.Out.WriteLine("{0} joined...".Fmt(joinEvent.DisplayName));
-                                      }
+            sseClient.OnCommand =
+                sem => {
+                    var joinEvent = sem as ServerEventJoin;
+                    if (joinEvent != null) {
+                        Console.Out.WriteLine(
+                            "{0} joined...".Fmt(joinEvent.DisplayName));
+                    }
 
-                                      var leaveEvent = sem as ServerEventLeave;
-                                      if(leaveEvent != null) {
-                                          var jnevent = leaveEvent.Json.FromJson<ServerEventJoin>();
-                                          Console.Out.WriteLine("{0} left...".Fmt(jnevent.DisplayName));
-                                      }
-                                  };
+                    var leaveEvent = sem as ServerEventLeave;
+                    if (leaveEvent != null) {
+                        var jnevent = leaveEvent.Json.FromJson<ServerEventJoin>();
+                        Console.Out.WriteLine(
+                            "{0} left...".Fmt(jnevent.DisplayName));
+                    }
+                };
             Task.WaitAll(sseClient.Connect());
 
             for(;;) {
@@ -49,7 +52,11 @@ namespace _3_SSE_Client {
                     break;
                 }
 
-                sseClient.ServiceClient.Post(new BroadcastRequest {Name = name, Message = command});
+                sseClient.ServiceClient.Post(
+                    new BroadcastRequest {
+                        Name = name, 
+                        Message = command
+                    });
             }
         }
     }

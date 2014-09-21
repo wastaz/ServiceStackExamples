@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Raven.Client;
 using Raven.Client.Linq;
@@ -14,29 +15,38 @@ namespace _2_Consuming_Server.Services {
             this.documentStore = documentStore;
         }
 
-        public List<AnimalResponse> Get(FindAnimals request) {
-            var results = new List<AnimalResponse>();
-            using(var session = documentStore.OpenSession()) {
-                var animals = session.Query<Animal>().Where(a => a.Name.StartsWith(request.Name)).ToList();
-                results.AddRange(
-                    animals.Select(
-                        a => new AnimalResponse {
-                            Name = a.Name,
-                            Race = a.Race,
-                            Noise = GetNoise(a.Race)
-                        }));
-            }
-            return results;
+        public object Get(FindAnimals request) {
+            return Request.ToOptimizedResultUsingCache(
+                base.Cache,
+                UrnId.Create(typeof(FindAnimals), request.Name),
+                TimeSpan.FromSeconds(10),
+                () => {
+                    var results = new List<AnimalResponse>();
+                    using(var session = documentStore.OpenSession()) {
+                        var animals = session.Query<Animal>().Where(a => a.Name.StartsWith(request.Name)).ToList();
+                        results.AddRange(
+                            animals.Select(
+                                a => new AnimalResponse {
+                                    Name = a.Name,
+                                    Race = a.Race,
+                                    Noise = GetNoise(a.Race)
+                                }));
+                    }
+                    return results;
+                });
         }
 
-        public AnimalResponse Get(GetAnimal request) {
-            using(var session = documentStore.OpenSession()) {
-                var result = session.Query<Animal>().FirstOrDefault(a => a.Name.Equals(request.Name));
-                if (result == null) {
-                    throw HttpError.NotFound("Animal with name {0} not found".Fmt(request.Name));
-                }
-                return new AnimalResponse {Name = result.Name, Race = result.Race, Noise = GetNoise(result.Race)};
-            }
+        public object Get(GetAnimal request) {
+            return Request.ToOptimizedResultUsingCache(base.Cache, UrnId.Create(typeof(GetAnimal), request.Name),
+                () => {
+                    using (var session = documentStore.OpenSession()) {
+                        var result = session.Query<Animal>().FirstOrDefault(a => a.Name.Equals(request.Name));
+                        if (result == null) {
+                            throw HttpError.NotFound("Animal with name {0} not found".Fmt(request.Name));
+                        }
+                        return new AnimalResponse { Name = result.Name, Race = result.Race, Noise = GetNoise(result.Race) };
+                    }
+                });
         }
 
         public AnimalResponse Post(Animal request) {
@@ -44,6 +54,7 @@ namespace _2_Consuming_Server.Services {
                 session.Store(request);
                 session.SaveChanges();
             }
+            base.Cache.Remove(UrnId.Create(typeof(GetAnimal), request.Name));
             var result = request.ConvertTo<AnimalResponse>();
             result.Noise = GetNoise(request.Race);
             return result;

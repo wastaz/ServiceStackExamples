@@ -8,7 +8,10 @@ using _2_Consuming_Shared;
 namespace _2_Consuming_Client {
     internal class Program {
         static void Main(string[] args) {
-            var client = new JsonServiceClient("http://localhost:1337/");
+            var client = new JsonServiceClient("http://localhost:1337/") {
+                UserName = "test",
+                Password = "test123",
+            };
             Task.WaitAll(DoStuff(client));
             Console.In.ReadLine();
         }
